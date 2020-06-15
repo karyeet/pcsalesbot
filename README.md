@@ -1,2 +1,1 @@
-# pcsalesbot
-pcsalesbot
+Reddit Notifier

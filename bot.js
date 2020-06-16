@@ -23,6 +23,7 @@ http.createServer(function (req, res) {
 console.log('Your app is listening on port '+process.env.PORT)
 //
 
+const doNotsendIfMoreThan5MinOld = true
 
 const request = require('request') // Request is a npm module which simplifies http requests https://github.com/request/request
 const discord = require('discord.js') //discord.js is a npm module which provides a library for communicating with the Discord API https://github.com/discordjs/discord.js
@@ -71,7 +72,7 @@ request('https://www.reddit.com/r/buildapcsales/new.json?sort=new',cb1)
 function cb1(_,b){
   var data=JSON.parse(b.body).data.children['0'].data
   //console.log(data)
-  if (last.indexOf(data.id)==-1){
+  if (last.indexOf(data.id)==-1 && (new Date().getTime()/1000)-data.created>1200){
     console.log(last.indexOf(data.id))
     last.push(data.id)
     saveLast()

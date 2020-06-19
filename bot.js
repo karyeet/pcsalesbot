@@ -47,27 +47,50 @@ var channel
 let notifylist = JSON.parse(fs.readFileSync('./notify.json'))
 const Prefix = '~'
 
-function getPrice(ostr){
-  let str = ostr.replace(/\(.*\)/g,'')
-  str = str.replace(/\[.*\]/g,'')
-  str = str.replace(/\$\d+\.*\d*\s*-/,'')
-  str = str.match(/\$\d+,?\d+\.*\d*/)
-  if ((!str || !str[0]) && ostr.match(/\(\$?\d+\.*\d*\s*(-\$?\d+\.*\d*)?\)/)){
-    str = ostr.match(/\(\$?\d+\.*\d*\s*(-\$?\d+\.*\d*)?\)/)
-    str = str[0].replace(/\(|\)/g,'')
-    if(str.match('-')){
-      str = str.replace(/\$/g,'')
-      str = str.match(/(\d+\.?\d*)-(\d+\.?\d*)/)
-      str = '$'+(Number(str[1])-Number(str[2])).toString()
-      str = str.match(/\$?\d+.?\d?\d?/)
-      return str[0]
-    }
-    str = [str]
-  }
-  return str[0]
+function priceMethod1(title){
+  title = title.replace(/\([^)]*\)/g,'')
+  title = title.replace(/\[.*\]/g,'')
+  title = title.replace(/\$\d+\.*\d*\s*-/,'')
+  title = title.match(/\$\d+,?\d+\.*\d*/)
+  return title
 }
 
-const doNotsendIfMoreThan5MinOld = false
+function priceMethod2(title){
+  if (title.match(/\(\$?\d+\.*\d*\s*(-\$?\d+\.*\d*)?\)/)){
+    title = title.match(/\(\$?\d+\.*\d*\s*(-\$?\d+\.*\d*)?\)/)
+    title = title[0].replace(/\(|\)/g,'')
+    if(title.match('-')){
+      title = title.replace(/\$/g,'')
+      title = title.match(/(\d+\.?\d*)-(\d+\.?\d*)/)
+      title = '$'+(Number(title[1])-Number(title[2])).toString()
+      title = title.match(/\$?\d+.?\d?\d?/)
+    }
+    return title
+  }
+}
+
+function priceMethod3(title){ //catch the retards
+let normalGeneric = title.match(/\$\d+\.?\d+/)
+if(normalGeneric){return normalGeneric[0]}
+
+let retardGeneric = title.match(/\d+\.?\d+\$/)
+if(retardGeneric){return ('$'+retardGeneric[0].replace('$',''))}
+}
+
+function getPrice(title){
+  let method1 = priceMethod1(title)
+  if(method1 && method1[0]){return method1[0]}
+
+  let method2 = priceMethod2(title)
+  if(method2){return method2}
+
+  let method3 = priceMethod3(title)
+  if(method3){return method3}
+
+  return 'Unable to Find Price'
+}
+
+const doNotsendIfMoreThan15MinOld = false
 
 function getData(){
 request('https://www.reddit.com/r/buildapcsales/new.json?sort=new',cb1)

@@ -52,7 +52,7 @@ function getPrice(ostr){
   str = str.replace(/\[.*\]/g,'')
   str = str.replace(/\$\d+\.*\d*\s*-/,'')
   str = str.match(/\$\d+,?\d+\.*\d*/)
-  if (!str || !str[0]){
+  if ((!str || !str[0]) && ostr.match(/\(\$?\d+\.*\d*\s*(-\$?\d+\.*\d*)?\)/)){
     str = ostr.match(/\(\$?\d+\.*\d*\s*(-\$?\d+\.*\d*)?\)/)
     str = str[0].replace(/\(|\)/g,'')
     if(str.match('-')){
@@ -67,14 +67,14 @@ function getPrice(ostr){
   return str[0]
 }
 
-const doNotsendIfMoreThan5MinOld = true
+const doNotsendIfMoreThan5MinOld = false
 
 function getData(){
 request('https://www.reddit.com/r/buildapcsales/new.json?sort=new',cb1)
 function cb1(_,b){
   var data=JSON.parse(b.body).data.children['0'].data
   //console.log(data)
-  if (last.indexOf(data.id)==-1 && (new Date().getTime()/1000)-data.created<1200){
+  if (last.indexOf(data.id)==-1 /*&& (new Date().getTime()/1000)-data.created<1200*/){
     console.log(last.indexOf(data.id))
     last.push(data.id)
     saveLast()

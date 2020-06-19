@@ -1,2 +1,4 @@
-console.log('shrug')
-require('../bot.js')
+module.exports = async (req, res) => {
+  console.log('shrug')
+  require('bot.js')
+}

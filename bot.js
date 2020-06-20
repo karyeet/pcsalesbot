@@ -70,11 +70,14 @@ function priceMethod2(title){
 }
 
 function priceMethod3(title){ //catch the retards
-let normalGeneric = title.match(/\$\d+\.?\d+/)
-if(normalGeneric){return normalGeneric[0]}
+	let normalGeneric = title.match(/\$\d+\.?\d+/)
+	if(normalGeneric){return normalGeneric[0]}
 
-let retardGeneric = title.match(/\d+\.?\d+\$/)
-if(retardGeneric){return ('$'+retardGeneric[0].replace('$',''))}
+	let retardGeneric = title.match(/\d+\.?\d+\$/)
+	if(retardGeneric){return ('$'+retardGeneric[0].replace('$',''))}
+
+	let symbolphobe = title.match(/\s\d+\.?\d+($|\s)/)
+	if(symbolphobe){return '$'+symbolphobe[0]}
 }
 
 function getPrice(title){

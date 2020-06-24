@@ -81,6 +81,8 @@ function priceMethod3(title){ //catch the retards
 }
 
 function getPrice(title){
+  title = title.replace(/,/g,'')
+	
   let method1 = priceMethod1(title)
   if(method1 && method1[0]){return method1[0]}
 

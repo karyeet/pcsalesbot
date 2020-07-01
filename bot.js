@@ -50,7 +50,7 @@ const Prefix = '~'
 function priceMethod1(title){
   title = title.replace(/\([^)]*\)/g,'')
   title = title.replace(/\[.*\]/g,'')
-  title = title.replace(/\$\d+\.*\d*\s*-/,'')
+  title = title.replace(/\$\d+\.*\d*\s*-\$\d+\.*\d*\s*/,'')
   title = title.match(/\$\d+,?\d+\.*\d*/)
   return title
 }
@@ -77,7 +77,7 @@ function priceMethod3(title){ //catch the retards
 	if(retardGeneric){return ('$'+retardGeneric[0].replace('$',''))}
 
 	let symbolphobe = title.match(/\s\d+\.?\d+($|\s)/)
-	if(symbolphobe){return '$'+symbolphobe[0]}
+	if(symbolphobe){return '$'+symbolphobe[0].replace(/ /g,'')}
 }
 
 function getPrice(title){
@@ -90,7 +90,7 @@ function getPrice(title){
   if(method2){return method2}
 
   let method3 = priceMethod3(title)
-  if(method3){return method3}
+  if(method3){return method3+' (Unsure)'}
 
   return 'Unable to Find Price'
 }

@@ -100,6 +100,7 @@ const doNotsendIfMoreThan15MinOld = false
 function getData(){
 request('https://www.reddit.com/r/buildapcsales/new.json?sort=new',cb1)
 function cb1(_,b){
+  if(!b){return}
   var data=JSON.parse(b.body).data.children['0'].data
   //console.log(data)
   if (last.indexOf(data.id)==-1 /*&& (new Date().getTime()/1000)-data.created<1200*/){

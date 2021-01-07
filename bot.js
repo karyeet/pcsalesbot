@@ -23,7 +23,12 @@ http.createServer(function (req, res) {
 console.log('Your app is listening on port '+process.env.PORT)
 //
 
-
+const sessionData ={
+  successfulPolls:0,
+  failedPolls:0,
+  posts:0,
+  upSince: new Date()
+}
 
 const request = require('request') // Request is a npm module which simplifies http requests https://github.com/request/request
 const discord = require('discord.js') //discord.js is a npm module which provides a library for communicating with the Discord API https://github.com/discordjs/discord.js
@@ -100,7 +105,8 @@ const doNotsendIfMoreThan15MinOld = false
 function getData(){
 request('https://www.reddit.com/r/buildapcsales/new.json?sort=new',cb1)
 function cb1(_,b){
-  if(!b){return}
+  if(!b){sessionData.failedPolls++; return}
+  sessionData.successfulPolls++
   var data=JSON.parse(b.body).data.children['0'].data
   //console.log(data)
   if (last.indexOf(data.id)==-1 /*&& (new Date().getTime()/1000)-data.created<1200*/){
@@ -111,6 +117,7 @@ function cb1(_,b){
     var mention = generateNotifyList(data.link_flair_text,data.title)
     if (data.thumbnail=='default'||data.thumbnail=='nsfw'){data.thumbnail='https://cdn.discordapp.com/avatars/598034462638604298/e0f6694d9e2d68a0ab847a5e02f771e0.png?size=128'}
     //console.log(data.thumbnail)
+    sessionData.posts++
     channel.send(mention,{"embed":{
       "title":"New **"+data.link_flair_text+"** Entry",
       "description":'['+data.title+']('+data.url+')',
@@ -238,6 +245,34 @@ Total: $${total}\`\`\``)
       }
     }
   }
+
+  if(commandCheck("uptime") || commandCheck("sessioninfo") || commandCheck("sessioninfo") || commandCheck("stats")){
+    message.channel.send({"embed":{
+      "description":'Information about the bot since its boot on '+(sessionData.upSince.getMonth()+"/"+sessionData.upSince.getDate()+"/"+sessionData.upSince.getFullYear()+" "+sessionData.upSince.getHours()+":"+sessionData.upSince.getMinutes()),
+      "timestamp": new Date(),
+      "color": 13065308,
+      "thumbnail":{"url":data.thumbnail},
+      "fields":[
+        {
+          "name":"Uptime",
+          "value": uptime(process.uptime())
+        },
+        {
+          "name":"Posts (made to #pc-sales):",
+          "value": sessionData.posts
+        },
+        {
+          "name":"Successful Polls (to reddit):",
+          "value": sessionData.successfulPolls
+        },
+        {
+          "name":"Failed Polls (to reddit):",
+          "value": sessionData.failedPolls
+        }
+      ]
+    }})
+  }
+
   if(commandCheck('help',message)){
     message.author.send(help)
   }
@@ -310,3 +345,31 @@ Laptop
 Micron/Hynix/Samsung
 M.2 SSD
 Printer\`\`\``
+
+
+function uptime(s) { //https://stackoverflow.com/a/50098261
+
+  const d = Math.floor(s / (3600 * 24));
+
+  s  -= d * 3600 * 24;
+
+  const h = Math.floor(s / 3600);
+
+  s  -= h * 3600;
+
+  const m = Math.floor(s / 60);
+
+  s  -= m * 60;
+
+  const tmp = [];
+
+  (d) && tmp.push(d + 'd');
+
+  (d || h) && tmp.push(h + 'h');
+
+  (d || h || m) && tmp.push(m + 'm');
+
+  tmp.push(s + 's');
+
+  return tmp.join(' ');
+}

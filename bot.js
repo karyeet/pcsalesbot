@@ -14,6 +14,7 @@
  * This script, with exceptions to wherever noted, was written entirely by myself.
 */
 
+require('dotenv').config()
 //Initialize http server to work with glitch.com
 const http = require('http'); //Built-in http API.
 http.createServer(function (req, res) {
@@ -246,12 +247,11 @@ Total: $${total}\`\`\``)
     }
   }
 
-  if(commandCheck("uptime") || commandCheck("sessioninfo") || commandCheck("sessioninfo") || commandCheck("stats")){
-    message.channel.send({"embed":{
-      "description":'Information about the bot since its boot on '+(sessionData.upSince.getMonth()+"/"+sessionData.upSince.getDate()+"/"+sessionData.upSince.getFullYear()+" "+sessionData.upSince.getHours()+":"+sessionData.upSince.getMinutes()),
+  if(commandCheck("uptime", message) || commandCheck("sessioninfo", message) || commandCheck("sessioninfo", message) || commandCheck("stats", message)){
+    message.channel.send({"embed":{ //console.log(new Date().toLocaleTimeString().replace(/([\d]+:[\d]{2})(:[\d]{2})(.*)/, "$1$3")) https://stackoverflow.com/a/17538193
+      "description":'Information about the bot since its boot on '+((sessionData.upSince.getMonth()+1)+"/"+sessionData.upSince.getDate()+"/"+sessionData.upSince.getFullYear()+" "+sessionData.upSince.toLocaleTimeString().replace(/([\d]+:[\d]{2})(:[\d]{2})(.*)/, "$1$3")),
       "timestamp": new Date(),
       "color": 13065308,
-      "thumbnail":{"url":data.thumbnail},
       "fields":[
         {
           "name":"Uptime",
@@ -262,11 +262,11 @@ Total: $${total}\`\`\``)
           "value": sessionData.posts
         },
         {
-          "name":"Successful Polls (to reddit):",
+          "name":"Successful Polls (made to reddit):",
           "value": sessionData.successfulPolls
         },
         {
-          "name":"Failed Polls (to reddit):",
+          "name":"Failed Polls (made to reddit):",
           "value": sessionData.failedPolls
         }
       ]
@@ -369,7 +369,7 @@ function uptime(s) { //https://stackoverflow.com/a/50098261
 
   (d || h || m) && tmp.push(m + 'm');
 
-  tmp.push(s + 's');
+  tmp.push(Math.floor(s) + 's');
 
   return tmp.join(' ');
 }

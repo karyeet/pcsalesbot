@@ -7,10 +7,14 @@
     "start": "node bot.js"
   },
   "dependencies": {
-    "discord.js": "^11.5.1",
+    "bufferutil": "^4.0.3",
+    "discord.js": "^12.5.1",
     "dotenv": "^8.2.0",
+    "erlpack": "github:discord/erlpack",
     "express": "^4.17.1",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "utf-8-validate": "^5.0.4",
+    "zlib-sync": "^0.1.7"
   },
   "engines": {
     "node": "12.x"

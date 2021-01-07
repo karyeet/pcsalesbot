@@ -157,9 +157,9 @@ var client = new discord.Client()
 
 client.login(process.env.token) //DISCORD API KEY HERE
 
-client.on('ready',()=>{
+client.on('ready',async ()=>{
   console.log('ready')
-  channel=client.channels.get('624438503178240001')//'624438503178240001') //SPECIFY CHANNEL ID TO SEND MESSAGES TO
+  channel=await client.channels.fetch('624438503178240001')//'624438503178240001') //SPECIFY CHANNEL ID TO SEND MESSAGES TO
   setInterval(function(){getData()},5000)
   client.user.setActivity('for lit deals', { type: 'WATCHING' })
           })

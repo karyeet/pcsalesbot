@@ -103,10 +103,19 @@ function getPrice(title){
 
 const doNotsendIfMoreThan15MinOld = false
 
+function isJson(str) {
+  try {
+      rJSON.parse(str);
+  } catch (e) {
+      return false;
+  }
+  return true;
+}
+
 function getData(){
 request('https://www.reddit.com/r/buildapcsales/new.json?sort=new',cb1)
 function cb1(_,b){
-  if(!b){sessionData.failedPolls++; return}
+  if(!b || !isJson(b)){sessionData.failedPolls++; return}
   sessionData.successfulPolls++
   var data=JSON.parse(b.body).data.children['0'].data
   //console.log(data)

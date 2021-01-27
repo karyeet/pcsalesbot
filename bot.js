@@ -39,6 +39,7 @@ const fs = require('fs') //Built-in filesystem API.
 const salestax = JSON.parse(fs.readFileSync('./salestax.json'))
 let last = JSON.parse(fs.readFileSync('./last.json','utf8'))
 let blacklist = JSON.parse(fs.readFileSync('./blacklist.json','utf8'))
+let whitelist = JSON.parse(fs.readFileSync('./whitelist.json','utf8'))
 
 function saveLast(){
   if(last.length>20){last.shift()}
@@ -47,6 +48,10 @@ function saveLast(){
 
 function saveBlacklist(){
   fs.writeFileSync('./blacklist.json',JSON.stringify(blacklist))
+}
+
+function saveWhitelist(){
+  fs.writeFileSync('./whitelist.json',JSON.stringify(whitelist))
 }
 
 var channel
@@ -154,12 +159,21 @@ function generateNotifyList(flair,title){
   if (flair){
     if (notifylist[flair.toUpperCase()]){
       notifylist[flair.toUpperCase()].forEach(function(user){
-        if((!user.price || user.price>=Number(getPrice(title).replace('$',''))) && (!titleHaveBlacklist(title.toUpperCase(),user.id)))
+        if((!user.price || user.price>=Number(getPrice(title).replace('$',''))) && (!titleHaveBlacklist(title.toUpperCase(),user.id)) && titleHaveWhitelist(title,user.id,flair))
           string=string+'<@'+user.id+'>'
         })
     }
   }
   return string
+}
+
+function organizeWhitelist(whitelistjson){
+  let whitelist = JSON.stringify(whitelistjson).replace(/"|{|}|\[|\]/gm,'')
+  let newLineRegex = /,([a-zA-Z]*:)/
+  while(newLineRegex.exec(whitelist)){
+    whitelist = whitelist.replace(/(,)[a-zA-Z]*:/,'\n'+newLineRegex.exec(whitelist)[1])
+  }
+  return whitelist
 }
 
 var client = new discord.Client()
@@ -182,6 +196,17 @@ function commandCheck(command, message){
 function titleHaveBlacklist(title,id){
   for (let i in (blacklist[id])){
     if(title.match(blacklist[id][i])){return true}
+  }
+  return false
+}
+
+function titleHaveWhitelist(title,id,flair){
+  if(!whitelist[id][flair] || !whitelist[id][flair][0]){
+    return true
+  }else{
+    for (let i in (whitelist[id][flair])){
+      if(title.match(whitelist[id][i])){return true}
+    }
   }
   return false
 }
@@ -215,9 +240,46 @@ client.on('message',(message)=>{
     }
     saveBlacklist()
     console.log(blacklist[message.author.id])
-    if(blacklist[message.author.id][0]){message.reply('Your blacklisted terms are now: ```'+blacklist[message.author.id]+'```')}else{message.reply('No blacklisted terms.')}
+    if(blacklist[message.author.id][0]){
+      message.reply('Your blacklisted terms are now: ```'+blacklist[message.author.id]+'```')
+    }else{
+      message.reply('No blacklisted terms.')
+    }
   }
   
+  if(commandCheck("whitelist",message)){ //whitelist flair term,term
+    const flair = args[1] //.replace(/ /g,"")
+
+    if(!flair){
+      message.reply('Your whitelisted terms are now: ```'+organizeWhitelist(whitelist[message.author.id])+'```')
+      return
+    }
+
+    if(!notifylist[flair.toUpperCase()]){
+      message.reply('Unknown flair, check pinned messages!')
+      return
+    }
+
+    if(!whitelist[message.author.id]){
+      whitelist[message.author.id]={}
+    }
+    if(!whitelist[message.author.id][flair]){
+      whitelist[message.author.id][flair]=[]
+    }
+
+    let messageList = args.slice(2).join(' ').replace(/ ,/g,',').replace(/, /g,',').split(',')
+    for (let i in messageList){
+      if(messageList[i].length>0 && whitelist[message.author.id][flair].indexOf(messageList[i].toUpperCase())==-1){whitelist[message.author.id][flair].push(messageList[i].toUpperCase())}
+    }
+    saveWhitelist()
+    console.log(whitelist[message.author.id])
+    if(whitelist[message.author.id]){
+      message.reply('Your whitelisted terms are now: ```'+organizeWhitelist(whitelist[message.author.id])+'```')
+    }else{
+      message.reply('No whitelisted terms.')
+    }
+  }
+
   if(commandCheck('unblacklist',message)){
     let messageList = args.slice(1).join(' ').replace(/ ,/g,',').replace(/, /g,',').split(',')
     for (let i in messageList){
@@ -227,9 +289,46 @@ client.on('message',(message)=>{
     }
     saveBlacklist()
     console.log(blacklist[message.author.id])
-    if(blacklist[message.author.id][0]){message.reply('Your blacklisted terms are now: ```'+blacklist[message.author.id]+'```')}else{message.reply('No blacklisted terms.')}
+    if(blacklist[message.author.id][0]){
+      message.reply('Your blacklisted terms are now: ```'+blacklist[message.author.id]+'```')
+    }else{
+      message.reply('No blacklisted terms.')
+    }
   }
-  
+
+  if(commandCheck('unwhitelist',message)){
+    let messageList = args.slice(2).join(' ').replace(/ ,/g,',').replace(/, /g,',').split(',')
+    const flair = args[1] //.replace(/ /g,"")
+
+    if(!notifylist[flair.toUpperCase()]){
+      message.reply('Unknown flair, check pinned messages!')
+      return
+    }
+
+    if(!whitelist[message.author.id]){
+      message.reply("No whitelisted terms.")
+      return
+    }
+
+    for (let i in messageList){
+      if(whitelist[message.author.id][flair] && whitelist[message.author.id][flair].indexOf(messageList[i].toUpperCase())!=-1){
+        whitelist[message.author.id][flair].splice(whitelist[message.author.id][flair].indexOf(messageList[i].toUpperCase()),1)
+      }
+    }
+
+    if(whitelist[message.author.id][flair] && whitelist[message.author.id][flair].length==0){
+      whitelist[message.author.id][flair]=undefined
+    }
+
+    saveWhitelist()
+    console.log(whitelist[message.author.id])
+    if(Object.keys(whitelist[message.author.id])>0){
+      message.reply('Your whitelisted terms are now: ```'+organizeWhitelist(whitelist[message.author.id])+'```')
+    }else{
+      message.reply('No whitelisted terms.')
+    }
+  }
+
   if (commandCheck('unnotify',message)){
     if (query){
       query=query[0]
@@ -243,7 +342,7 @@ client.on('message',(message)=>{
     }else{
       message.reply('Check pinned messages!')
     }
-      }
+  }
 
   if(commandCheck('tax',message)){//~tax california
     if(args[1] && !Number.isNaN(Number(args[2]))){
@@ -298,6 +397,12 @@ Send \`~blacklist item,item2\` and the bot will not notify you if a title contai
 To unblacklist, send \`~unblacklist item,item2\`
 To view your blacklisted words, send just ~blacklist.
 Ex. \`~blacklist 1060,intel cpu\` or \`unblacklist 1060,intel cpu\`
+
+Only want to be notified for specific items from a flair? (not case sensitive & supports spaces) 
+Send \`~whitelist flair item,item2\` and the bot will not notify you if a title contains those words.
+To unwhitelist, send \`~unwhitelist flair item,item2\`
+To view your whitelisted words, send just ~whitelist.
+Ex. \`~whitelist gpu 1060,3800\` or \`unwhitelist cpu amd apu,intel cpu\`
 
 To calculate tax:
 Send \`~tax [state name] [price] \`

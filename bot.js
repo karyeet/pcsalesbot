@@ -392,13 +392,13 @@ Send \`~notify [flair] [max price]\` and the bot will notify you when that type 
 Ex. \`~notify monitor $300\` for a $300 max price or \`~notify\` monitor for any price.
 To *stop* receiving notifications, send \`~unnotify [flair]\`
 
-Want to blacklist items you already have? (not case sensitive & supports spaces) 
+Want to **blacklist** items you already have? (not case sensitive & supports spaces) 
 Send \`~blacklist item,item2\` and the bot will not notify you if a title contains those words.
 To unblacklist, send \`~unblacklist item,item2\`
 To view your blacklisted words, send just ~blacklist.
 Ex. \`~blacklist 1060,intel cpu\` or \`unblacklist 1060,intel cpu\`
 
-Only want to be notified for specific items from a flair? (not case sensitive & supports spaces) 
+Want to **whitelist** items for a flair?  (not case sensitive & supports spaces) 
 Send \`~whitelist flair item,item2\` and the bot will not notify you if a title contains those words.
 To unwhitelist, send \`~unwhitelist flair item,item2\`
 To view your whitelisted words, send just ~whitelist.

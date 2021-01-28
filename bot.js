@@ -201,11 +201,12 @@ function titleHaveBlacklist(title,id){
 }
 
 function titleHaveWhitelist(title,id,flair){
-  if(!whitelist[id] || !whitelist[id][flair] || !whitelist[id][flair][0]){
+  console.log(!whitelist[id], !whitelist[id] || !whitelist[id][flair], !whitelist[id] || !whitelist[id][flair] || !whitelist[id][flair][0])
+  if(!whitelist[id] || !whitelist[id][flair]){
     return true
   }else{
     for (let i in (whitelist[id][flair])){
-      if(title.match(whitelist[id][i])){return true}
+      if(title.match(whitelist[id][flair][i])){return true}
     }
   }
   return false

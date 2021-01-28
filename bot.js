@@ -201,15 +201,16 @@ function titleHaveBlacklist(title,id){
 }
 
 function titleHaveWhitelist(title,id,flair){
-  console.log(!whitelist[id], !whitelist[id] || !whitelist[id][flair], !whitelist[id] || !whitelist[id][flair] || !whitelist[id][flair][0])
-  if(!whitelist[id] || !whitelist[id][flair]){
-    return true
-  }else{
+  //console.log(!whitelist[id], !whitelist[id] || !whitelist[id][flair], !whitelist[id] || !whitelist[id][flair] || !whitelist[id][flair][0])
+  console.log(title,id,flair)
+  if(whitelist[id] && whitelist[id][flair]){
     for (let i in (whitelist[id][flair])){
       if(title.match(whitelist[id][flair][i])){return true}
     }
+    return false
+  }else{
+    return true
   }
-  return false
 }
 
 client.on('message',(message)=>{

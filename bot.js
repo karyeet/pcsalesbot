@@ -201,7 +201,7 @@ function titleHaveBlacklist(title,id){
 }
 
 function titleHaveWhitelist(title,id,flair){
-  if(!whitelist[id][flair] || !whitelist[id][flair][0]){
+  if(!whitelist[id] || !whitelist[id][flair] || !whitelist[id][flair][0]){
     return true
   }else{
     for (let i in (whitelist[id][flair])){

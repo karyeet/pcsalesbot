@@ -123,15 +123,12 @@ function cb1(_,b){
   if(!b || !b.body ||!isJson(b.body)){sessionData.failedPolls++; return}
   sessionData.successfulPolls++
   var data=JSON.parse(b.body).data.children['0'].data
-  //console.log(data)
   if (last.indexOf(data.id)==-1 /*&& (new Date().getTime()/1000)-data.created<1200*/){
     //console.log(last.indexOf(data.id))
     last.push(data.id)
     saveLast()
-    //console.log(data.link_flair_text)
     var mention = generateNotifyList(data.link_flair_text,data.title)
     if (data.thumbnail=='default'||data.thumbnail=='nsfw'){data.thumbnail='https://cdn.discordapp.com/avatars/598034462638604298/e0f6694d9e2d68a0ab847a5e02f771e0.png?size=128'}
-    //console.log(data.thumbnail)
     sessionData.posts++
     channel.send(mention,{"embed":{
       "title":"New **"+data.link_flair_text+"** Entry",
@@ -183,7 +180,7 @@ client.login(process.env.token) //DISCORD API KEY HERE
 client.on('ready',async ()=>{
   console.log('ready')
   channel=await client.channels.fetch('624438503178240001')//'624438503178240001') //SPECIFY CHANNEL ID TO SEND MESSAGES TO
-  setInterval(function(){getData()},5000)
+  setInterval(function(){getData()},500000)
   client.user.setActivity('for lit deals', { type: 'WATCHING' })
           })
 
@@ -325,13 +322,12 @@ client.on('message',(message)=>{
     }
 
     if(whitelist[message.author.id][flair] && whitelist[message.author.id][flair].length==0){
-      whitelist[message.author.id][flair]=undefined
+      delete whitelist[message.author.id][flair]
     }
 
     saveWhitelist()
-    console.log(whitelist[message.author.id])
-    if(Object.keys(whitelist[message.author.id])>0){
-      message.reply('Your whitelisted terms are now: ```'+organizeWhitelist(whitelist[message.author.id])+'```')
+    if(Object.keys(whitelist[message.author.id])[0]){
+      message.reply('fix Your whitelisted terms are now: ```'+organizeWhitelist(whitelist[message.author.id])+'```')
     }else{
       message.reply('No whitelisted terms.')
     }

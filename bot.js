@@ -201,6 +201,8 @@ function titleHaveBlacklist(title,id){
 }
 
 function titleHaveWhitelist(title,id,flair){
+  flair = flair.toUpperCase()
+  title = title.toUpperCase()
   //console.log(!whitelist[id], !whitelist[id] || !whitelist[id][flair], !whitelist[id] || !whitelist[id][flair] || !whitelist[id][flair][0])
   console.log(title,id,flair)
   if(whitelist[id] && whitelist[id][flair]){
@@ -250,7 +252,7 @@ client.on('message',(message)=>{
   }
   
   if(commandCheck("whitelist",message)){ //whitelist flair term,term
-    const flair = args[1] //.replace(/ /g,"")
+    const flair = args[1].toUpperCase() //.replace(/ /g,"")
 
     if(!flair){
       message.reply('Your whitelisted terms are now: ```'+organizeWhitelist(whitelist[message.author.id])+'```')
@@ -300,9 +302,9 @@ client.on('message',(message)=>{
 
   if(commandCheck('unwhitelist',message)){
     let messageList = args.slice(2).join(' ').replace(/ ,/g,',').replace(/, /g,',').split(',')
-    const flair = args[1] //.replace(/ /g,"")
+    const flair = args[1].toUpperCase() //.replace(/ /g,"")
 
-    if(!notifylist[flair.toUpperCase()]){
+    if(!notifylist[flair]){
       message.reply('Unknown flair, check pinned messages!')
       return
     }

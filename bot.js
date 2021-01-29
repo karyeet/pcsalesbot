@@ -200,8 +200,6 @@ function titleHaveBlacklist(title,id){
 function titleHaveWhitelist(title,id,flair){
   flair = flair.toUpperCase()
   title = title.toUpperCase()
-  //console.log(!whitelist[id], !whitelist[id] || !whitelist[id][flair], !whitelist[id] || !whitelist[id][flair] || !whitelist[id][flair][0])
-  console.log(title,id,flair)
   if(whitelist[id] && whitelist[id][flair]){
     for (let i in (whitelist[id][flair])){
       if(title.match(whitelist[id][flair][i])){return true}
@@ -240,7 +238,6 @@ client.on('message',(message)=>{
       if(messageList[i].length>0 && blacklist[message.author.id].indexOf(messageList[i].toUpperCase())==-1){blacklist[message.author.id].push(messageList[i].toUpperCase())}
     }
     saveBlacklist()
-    console.log(blacklist[message.author.id])
     if(blacklist[message.author.id][0]){
       message.reply('Your blacklisted terms are now: ```'+blacklist[message.author.id]+'```')
     }else{
@@ -277,7 +274,6 @@ client.on('message',(message)=>{
       if(messageList[i].length>0 && whitelist[message.author.id][flair].indexOf(messageList[i].toUpperCase())==-1){whitelist[message.author.id][flair].push(messageList[i].toUpperCase())}
     }
     saveWhitelist()
-    console.log(whitelist[message.author.id])
     if(whitelist[message.author.id]){
       message.reply('Your whitelisted terms are now: ```'+organizeWhitelist(whitelist[message.author.id])+'```')
     }else{
@@ -293,7 +289,6 @@ client.on('message',(message)=>{
       }
     }
     saveBlacklist()
-    console.log(blacklist[message.author.id])
     if(blacklist[message.author.id][0]){
       message.reply('Your blacklisted terms are now: ```'+blacklist[message.author.id]+'```')
     }else{

@@ -252,11 +252,15 @@ client.on('message',(message)=>{
   }
   
   if(commandCheck("whitelist",message)){ //whitelist flair term,term
-    const flair = args[1].toUpperCase() //.replace(/ /g,"")
+     //.replace(/ /g,"")
+     let flair
 
-    if(!flair){
+
+    if(!args[1]){
       message.reply('Your whitelisted terms are now: ```'+organizeWhitelist(whitelist[message.author.id])+'```')
       return
+    }else{
+      flair = args[1].toUpperCase()
     }
 
     if(!notifylist[flair.toUpperCase()]){

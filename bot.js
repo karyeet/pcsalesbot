@@ -180,7 +180,7 @@ client.login(process.env.token) //DISCORD API KEY HERE
 client.on('ready',async ()=>{
   console.log('ready')
   channel=await client.channels.fetch('624438503178240001')//'624438503178240001') //SPECIFY CHANNEL ID TO SEND MESSAGES TO
-  setInterval(function(){getData()},500000)
+  setInterval(function(){getData()},5000)
   client.user.setActivity('for lit deals', { type: 'WATCHING' })
           })
 

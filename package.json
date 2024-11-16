@@ -1,29 +1,27 @@
 {
-  "name": "reddit-notifier",
-  "version": "1.0.0",
-  "description": "Notify users when a new sale is posted on r/buildapcsales",
-  "main": "bot.js",
+  "name": "",
+  "version": "0.0.0",
+  "description": "",
+  "main": "build/src/index.js",
+  "types": "build/src/index.d.ts",
+  "files": [
+    "build/src"
+  ],
+  "license": "Apache-2.0",
+  "keywords": [],
   "scripts": {
-    "start": "node bot.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "gts lint",
+    "clean": "gts clean",
+    "compile": "tsc",
+    "fix": "gts fix",
+    "prepare": "npm run compile",
+    "pretest": "npm run compile",
+    "posttest": "npm run lint"
   },
-  "dependencies": {
-    "bufferutil": "^4.0.3",
-    "discord.js": "^12.5.1",
-    "dotenv": "^8.2.0",
-    "request": "^2.88.2",
-    "utf-8-validate": "^5.0.4",
-    "zlib-sync": "^0.1.7"
-  },
-  "engines": {
-    "node": "12.x"
-  },
-  "repository": {
-    "url": "https://glitch.com/edit/#!/hello-express"
-  },
-  "license": "MIT",
-  "keywords": [
-    "node",
-    "glitch",
-    "express"
-  ]
+  "devDependencies": {
+    "gts": "^6.0.2",
+    "typescript": "^5.6.3",
+    "@types/node": "^22.7.5"
+  }
 }

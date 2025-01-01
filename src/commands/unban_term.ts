@@ -18,8 +18,8 @@ module.exports = {
       return false;
     }
 
-    const term = interaction.options.getString('term')!.toLowerCase();
-    const removed = await salesbot.remove_banned_term(
+    const term: string = interaction.options.getString('term')!.toLowerCase();
+    const removed: boolean = await salesbot.remove_banned_term(
       interaction.guildId,
       interaction.user.id,
       term,

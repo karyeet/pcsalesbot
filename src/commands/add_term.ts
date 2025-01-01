@@ -20,7 +20,7 @@ module.exports = {
       return false;
     }
 
-    const term = interaction.options.getString('term')!.toLowerCase();
+    const term: string = interaction.options.getString('term')!.toLowerCase();
     await salesbot.add_tracked_term(
       interaction.guildId,
       interaction.user.id,

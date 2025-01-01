@@ -1,12 +1,18 @@
 import {Client, Events, GatewayIntentBits} from 'discord.js';
-import {token} from '../config.json';
+import {token, dbpath} from '../config.json';
 import {CommandManager} from './classes/CommandManager';
+import {SalesBot} from './classes/SalesBot';
+import {sqlite} from './classes/sqlite';
 
 const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates],
 });
 
 const commandManager = new CommandManager();
+
+const storage_driver = new sqlite(dbpath);
+
+const salesbot = new SalesBot(storage_driver);
 
 client.once(Events.ClientReady, readyClient => {
   console.log(`Discord Ready! Logged in as ${readyClient.user.tag}`);
@@ -17,7 +23,11 @@ client.on(Events.InteractionCreate, async interaction => {
   if (!interaction.isChatInputCommand()) return;
 
   try {
-    await commandManager.executeCommand(interaction.commandName, interaction);
+    await commandManager.executeCommand(
+      interaction.commandName,
+      interaction,
+      salesbot,
+    );
   } catch (error) {
     console.error(
       'Error occured while executing command',
@@ -42,5 +52,21 @@ client.on(Events.InteractionCreate, async interaction => {
   }
 });
 
-// Log in to Discord with your client's token
+//Log in to Discord with your client's token
 void client.login(token);
+
+// import {Reddit} from './classes/Reddit';
+
+// const reddit = new Reddit(['buildapcsales']);
+// const bapc = reddit.subreddits.get('buildapcsales');
+
+// if (bapc) {
+//   bapc.posts = bapc.parse_posts_res(require('../req-example.json'));
+
+//   void bapc.update_posts().then(() => {
+//     bapc.update_flairs();
+//     console.log(bapc.new_posts);
+//     console.log(bapc.posts.length);
+//     console.log(bapc.flairs);
+//   });
+// }

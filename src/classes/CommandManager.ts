@@ -8,6 +8,7 @@ import {REST, Routes} from 'discord.js';
 
 import path from 'path';
 import fs from 'fs';
+import {SalesBot} from './SalesBot';
 
 interface SlashCommand {
   data: SlashCommandBuilder;
@@ -69,9 +70,10 @@ export class CommandManager {
   public async executeCommand(
     commandName: string,
     interaction: CommandInteraction,
+    salesbot: SalesBot,
   ) {
     if (commandName in this.commands) {
-      await this.commands[commandName].execute(interaction);
+      await this.commands[commandName].execute(interaction, salesbot);
     } else {
       console.warn(`Command ${commandName} was called, but not found.`);
     }

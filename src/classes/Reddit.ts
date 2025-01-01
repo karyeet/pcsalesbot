@@ -12,6 +12,7 @@ interface post {
 
 export class SubReddit {
   flairs: Set<string>;
+  // set of posts
   posts: post[];
   new_posts: post[]; // new posts since last update
   name: string;
@@ -37,7 +38,7 @@ export class SubReddit {
       this.last_post_ts = last_ts; // use provided ts
     }
   }
-
+  // update posts and flairs
   async update() {
     await this.update_posts();
     this.update_flairs();
@@ -49,7 +50,7 @@ export class SubReddit {
       this.flairs.add(post.flair);
     }
   }
-
+  // update this.posts and this.new_posts
   async update_posts() {
     // returns whether update was successful
     const api_posts: post[] = await this.api_get_posts();
